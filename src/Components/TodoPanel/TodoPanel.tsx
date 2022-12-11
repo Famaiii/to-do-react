@@ -2,6 +2,7 @@ import React from "react";
 
 import styles from "./TodoPanel.module.css";
 import { Button } from "../Button/Button";
+import {useTodo} from "../../utils";
 
 const DEFAULT_TODO = {
   name: "",
@@ -10,18 +11,17 @@ const DEFAULT_TODO = {
 
 interface AddTodoPanelProps {
   mode: "add";
-  addTodo: ({ name, description }: Omit<Todo, "checked" | "id">) => void;
 }
 
 interface EditTodoPanelProps {
   mode: "edit";
   editTodo: Omit<Todo, "id" | "checked">;
-  changeTodo: ({ name, description }: Omit<Todo, "checked" | "id">) => void;
 }
 
 type TodoPanelProps = AddTodoPanelProps | EditTodoPanelProps;
 
 export const TodoPanel: React.FC<TodoPanelProps> = (props) => {
+  const {changeTodo,addTodo} = useTodo()
   const isEdit = props.mode === "edit";
 
   const [todo, setTodo] = React.useState(isEdit ? props.editTodo : DEFAULT_TODO);
@@ -34,9 +34,9 @@ export const TodoPanel: React.FC<TodoPanelProps> = (props) => {
   const onClick = () => {
     const todoItem = { name: todo.name, description: todo.description };
     if (isEdit) {
-      return props.changeTodo(todoItem);
+      return changeTodo(todoItem);
     }
-    props.addTodo(todoItem);
+    addTodo(todoItem);
     setTodo(DEFAULT_TODO);
   };
 
